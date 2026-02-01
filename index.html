@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>System Alert</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body style="background:black;color:#00ff00;font-family:monospace;text-align:center;padding-top:20%;">
+  <h2>System Service</h2>
+  <p>Tap Initialize</p>
+  <button onclick="notify()" style="font-size:18px;">Initialize</button>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+
+function notify() {
+  Notification.requestPermission().then(p => {
+    if (p === 'granted') {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification("System Alert", {
+          body: "I love you ❤️",
+          icon: "icon.png"
+        });
+      });
+    }
+  });
+}
+</script>
+</body>
+</html>
