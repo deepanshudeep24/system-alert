@@ -3,24 +3,47 @@
 <head>
   <title>System Alert</title>
   <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
 </head>
+
 <body style="background:black;color:#00ff00;font-family:monospace;text-align:center;padding-top:20%;">
   <h2>System Service</h2>
-  <p>Tap Initialize</p>
-  <button onclick="notify()" style="font-size:18px;">Initialize</button>
+
+  <button id="installBtn" style="display:none;font-size:18px;">
+    Install System App
+  </button>
+
+  <br><br>
+
+  <button onclick="notify()" style="font-size:18px;">
+    Initialize
+  </button>
 
 <script>
+let deferredPrompt;
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBtn').style.display = 'inline-block';
+});
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+});
 
 function notify() {
   Notification.requestPermission().then(p => {
     if (p === 'granted') {
       navigator.serviceWorker.ready.then(reg => {
         reg.showNotification("System Alert", {
-          body: "I love you ❤️",
-          icon: "icon.png"
+          body: "I love you ❤️"
         });
       });
     }
